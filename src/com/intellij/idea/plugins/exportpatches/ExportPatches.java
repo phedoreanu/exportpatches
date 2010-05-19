@@ -15,23 +15,7 @@
  */
 package com.intellij.idea.plugins.exportpatches;
 
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataConstants;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.application.Application;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.vcs.changes.Change;
-import com.intellij.openapi.vcs.changes.ChangeList;
-import com.intellij.openapi.vcs.changes.ChangeListManager;
-import com.intellij.openapi.vfs.VirtualFile;
 import org.apache.log4j.Logger;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -43,45 +27,5 @@ import java.util.List;
 public class ExportPatches {
   private static final Logger LOG = Logger.getLogger(ExportPatches.class);
 
-  public static void showMessage(AnActionEvent e) {
-    Application application = ApplicationManager.getApplication();
-
-    DataContext dataContext = e.getDataContext();
-    Project project = (Project)dataContext.getData(DataConstants.PROJECT);
-    Module module = (Module)dataContext.getData(DataConstants.MODULE);
-
-    String projectName = project.getName();
-    String projectPath = project.getBaseDir().getPath();
-
-    //ActionMenuItem source = (ActionMenuItem)e.getInputEvent().getSource();
-    //System.out.println("source = " + source.getActionCommand());
-
-    //ChangeList changeListClicked = (ChangeList)dataContext.getData(DataConstants.SELECTED_ITEM);
-    //System.out.println("changelistClicked = " + changeListClicked);
-
-    List<String> changedFilenames = new ArrayList<String>();
-    ChangeList[] changeListsClicked = (ChangeList[])dataContext.getData(DataConstants.CHANGE_LISTS);
-    System.out.println("changelistsClicked.length = " + changeListsClicked.length);
-    for (ChangeList changeList : changeListsClicked) {
-      String changelistClickedName = changeList.getName();
-      System.out.println("changelistClickedName = " + changelistClickedName);
-
-      if (changeList != null) {
-        Collection<Change> changeCollection = changeList.getChanges();
-
-        for (Change change : changeCollection) {
-          VirtualFile virtualFile = change.getVirtualFile();
-          String name = virtualFile.getName();
-          changedFilenames.add(name);
-          String path = virtualFile.getPath();
-          changedFilenames.add(path);
-        }
-      }
-    }
-
-    ChangeListManager changeListManager = ChangeListManager.getInstance(project);
-
-    Messages.showMessageDialog(changedFilenames.toString(), projectName, Messages.getInformationIcon());
-
-  }
+  
 }

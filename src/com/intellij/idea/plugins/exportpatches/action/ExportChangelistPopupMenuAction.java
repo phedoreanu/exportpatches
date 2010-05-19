@@ -15,10 +15,20 @@
  */
 package com.intellij.idea.plugins.exportpatches.action;
 
-import com.intellij.idea.plugins.exportpatches.ExportPatches;
+import com.intellij.idea.plugins.exportpatches.component.ExportPatchesProjectComponent;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.DataConstants;
+import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.application.Application;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vcs.changes.ChangeList;
+import com.intellij.openapi.vcs.changes.ChangeListManager;
 import org.apache.log4j.Logger;
+
+import java.util.Arrays;
 
 /**
  * Created by IntelliJ IDEA.
@@ -32,6 +42,28 @@ public class ExportChangelistPopupMenuAction extends AnAction {
   
   public void actionPerformed(AnActionEvent e) {
 
-    ExportPatches.showMessage(e);
+    DataContext dataContext = e.getDataContext();
+    Project project = (Project)dataContext.getData(DataConstants.PROJECT);
+    ExportPatchesProjectComponent patchesProjectComponent = project.getComponent(ExportPatchesProjectComponent.class);
+
+    Application application = ApplicationManager.getApplication();
+
+    Module module = (Module)dataContext.getData(DataConstants.MODULE);
+
+    ChangeListManager changeListManager = ChangeListManager.getInstance(project);
+
+    String projectName = project.getName();
+    String projectPath = project.getBaseDir().getPath();
+
+    //ActionMenuItem source = (ActionMenuItem)e.getInputEvent().getSource();
+    //System.out.println("source = " + source.getActionCommand());
+
+    //ChangeList changeListClicked = (ChangeList)dataContext.getData(DataConstants.SELECTED_ITEM);
+    //System.out.println("changelistClicked = " + changeListClicked);
+
+    ChangeList[] changeListsClicked = (ChangeList[])dataContext.getData(DataConstants.CHANGE_LISTS);
+    System.out.println("changelistsClicked.length = " + changeListsClicked.length);
+
+    patchesProjectComponent.savePatch(Arrays.asList(changeListsClicked));
   }
 }

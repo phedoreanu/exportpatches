@@ -10,7 +10,9 @@
   </application-components>
 
   <project-components>
-    <!-- Add your project components here -->
+    <component>
+      <implementation-class>com.intellij.idea.plugins.exportpatches.component.ExportPatchesProjectComponent</implementation-class>
+    </component>
   </project-components>
 
   <extensions defaultExtensionNs="com.intellij">
@@ -28,5 +30,4 @@
       <add-to-group group-id="ChangesViewToolbar" anchor="last"/>
     </action>
   </actions>
-
 </idea-plugin>
