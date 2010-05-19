@@ -1,0 +1,32 @@
+<idea-plugin version="1">
+  <name>ExportPatches</name>
+  <description>Export Change list as patch in an exploaded directory</description>
+  <version>1.0</version>
+  <vendor>YourCompany</vendor>
+  <idea-version since-build="8000"/>
+
+  <application-components>
+    <!-- Add your application components here -->
+  </application-components>
+
+  <project-components>
+    <!-- Add your project components here -->
+  </project-components>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <!-- Add your extensions here -->
+  </extensions>
+
+  <actions>
+    <action id="ExportChangelist" class="com.intellij.idea.plugins.exportpatches.action.ExportChangelistPopupMenuAction" text="Export Change list as patch"
+            description="Export Change list as patch in an exploaded directory">
+      <add-to-group group-id="ChangesViewPopupMenu" anchor="first"/>
+    </action>
+
+    <action id="ExportChangelistToolbarAction" class="com.intellij.idea.plugins.exportpatches.action.ExportChangelistToolbarAction"
+            text="Export Change list as patch" description="Export Change list as patch in an exploaded directory">
+      <add-to-group group-id="ChangesViewToolbar" anchor="last"/>
+    </action>
+  </actions>
+
+</idea-plugin>
