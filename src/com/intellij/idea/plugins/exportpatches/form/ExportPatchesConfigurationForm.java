@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.intellij.idea.plugins.exportpatches;
+package com.intellij.idea.plugins.exportpatches.form;
 
 import com.intellij.idea.plugins.exportpatches.component.ExportPatchesProjectComponent;
 
@@ -35,13 +35,17 @@ public class ExportPatchesConfigurationForm {
   private JTextField patchPath;
   private JLabel patchPathLabel;
   private JButton openFileChooserButton;
+  private JTextField patchPathPrefix;
+  private JLabel patchPathPrefixLabel;
 
   public ExportPatchesConfigurationForm() {
     patchPathLabel.setLabelFor(patchPath);
+    patchPathPrefixLabel.setLabelFor(patchPathPrefix);
+
     openFileChooserButton.addActionListener(new ActionListener() {
-      @Override
       public void actionPerformed(ActionEvent e) {
         if (e.getSource() == openFileChooserButton) {
+
           final JFileChooser fc = new JFileChooser();
           // todo project home
           //fc.setCurrentDirectory(new File(""));
@@ -63,14 +67,21 @@ public class ExportPatchesConfigurationForm {
 
   public void setData(ExportPatchesProjectComponent data) {
     patchPath.setText(data.getPatchPath());
+    patchPathPrefix.setText(data.getPatchPathPrefix());
   }
 
   public void getData(ExportPatchesProjectComponent data) {
     data.setPatchPath(patchPath.getText());
+    data.setPatchPathPrefix(patchPathPrefix.getText());
   }
 
   public boolean isModified(ExportPatchesProjectComponent data) {
     if (patchPath.getText() != null ? !patchPath.getText().equals(data.getPatchPath()) : data.getPatchPath() != null) return true;
+    if (patchPathPrefix.getText() != null
+        ? !patchPathPrefix.getText().equals(data.getPatchPathPrefix())
+        : data.getPatchPathPrefix() != null) {
+      return true;
+    }
     return false;
   }
 }

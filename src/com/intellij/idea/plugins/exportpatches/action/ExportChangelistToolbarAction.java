@@ -42,7 +42,7 @@ public class ExportChangelistToolbarAction extends AnAction {
   
   public void actionPerformed(AnActionEvent e) {
 
-    DataContext dataContext = e.getDataContext();
+    /*DataContext dataContext = e.getDataContext();
     Project project = (Project)dataContext.getData(DataConstants.PROJECT);
     ExportPatchesProjectComponent patchesProjectComponent = project.getComponent(ExportPatchesProjectComponent.class);
 
@@ -63,8 +63,7 @@ public class ExportChangelistToolbarAction extends AnAction {
     //System.out.println("changelistClicked = " + changeListClicked);
 
     ChangeList[] changeListsClicked = (ChangeList[])dataContext.getData(DataConstants.CHANGE_LISTS);
-    System.out.println("changelistsClicked.length = " + changeListsClicked.length);
 
-    patchesProjectComponent.savePatch(Arrays.asList(changeListsClicked));
+    patchesProjectComponent.savePatch(Arrays.asList(changeListsClicked));*/
   }
 }

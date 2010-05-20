@@ -62,8 +62,8 @@ public class ExportChangelistPopupMenuAction extends AnAction {
     //System.out.println("changelistClicked = " + changeListClicked);
 
     ChangeList[] changeListsClicked = (ChangeList[])dataContext.getData(DataConstants.CHANGE_LISTS);
-    System.out.println("changelistsClicked.length = " + changeListsClicked.length);
-
-    patchesProjectComponent.savePatch(Arrays.asList(changeListsClicked));
+    //System.out.println("changelistsClicked.length = " + changeListsClicked.length);
+    
+    patchesProjectComponent.savePatch(changeListsClicked);
   }
 }
