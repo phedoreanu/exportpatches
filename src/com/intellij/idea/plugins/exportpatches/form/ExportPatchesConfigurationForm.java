@@ -35,6 +35,7 @@ public class ExportPatchesConfigurationForm {
   private JTextField patchPath;
   private JLabel patchPathLabel;
   private JButton openFileChooserButton;
+  private JCheckBox exportSources;
 
   public ExportPatchesConfigurationForm() {
     patchPathLabel.setLabelFor(patchPath);
@@ -64,14 +65,17 @@ public class ExportPatchesConfigurationForm {
 
   public void setData(ExportPatchesProjectComponent data) {
     patchPath.setText(data.getPatchPath());
+    exportSources.setSelected(data.isExportSources());
   }
 
   public void getData(ExportPatchesProjectComponent data) {
     data.setPatchPath(patchPath.getText());
+    data.setExportSources(exportSources.isSelected());
   }
 
   public boolean isModified(ExportPatchesProjectComponent data) {
     if (patchPath.getText() != null ? !patchPath.getText().equals(data.getPatchPath()) : data.getPatchPath() != null) return true;
+    if (exportSources.isSelected() != data.isExportSources()) return true;
     return false;
   }
 }
