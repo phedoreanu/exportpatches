@@ -35,12 +35,9 @@ public class ExportPatchesConfigurationForm {
   private JTextField patchPath;
   private JLabel patchPathLabel;
   private JButton openFileChooserButton;
-  private JTextField patchPathPrefix;
-  private JLabel patchPathPrefixLabel;
 
   public ExportPatchesConfigurationForm() {
     patchPathLabel.setLabelFor(patchPath);
-    patchPathPrefixLabel.setLabelFor(patchPathPrefix);
 
     openFileChooserButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -67,21 +64,14 @@ public class ExportPatchesConfigurationForm {
 
   public void setData(ExportPatchesProjectComponent data) {
     patchPath.setText(data.getPatchPath());
-    patchPathPrefix.setText(data.getPatchPathPrefix());
   }
 
   public void getData(ExportPatchesProjectComponent data) {
     data.setPatchPath(patchPath.getText());
-    data.setPatchPathPrefix(patchPathPrefix.getText());
   }
 
   public boolean isModified(ExportPatchesProjectComponent data) {
     if (patchPath.getText() != null ? !patchPath.getText().equals(data.getPatchPath()) : data.getPatchPath() != null) return true;
-    if (patchPathPrefix.getText() != null
-        ? !patchPathPrefix.getText().equals(data.getPatchPathPrefix())
-        : data.getPatchPathPrefix() != null) {
-      return true;
-    }
     return false;
   }
 }

@@ -16,10 +16,7 @@
 package com.intellij.idea.plugins.exportpatches.component;
 
 import com.intellij.idea.plugins.exportpatches.form.ExportPatchesConfigurationForm;
-import com.intellij.openapi.actionSystem.DataConstants;
 import com.intellij.openapi.components.ProjectComponent;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleServiceManager;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
@@ -33,9 +30,6 @@ import com.intellij.openapi.vcs.changes.ChangeList;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.packaging.artifacts.Artifact;
 import com.intellij.packaging.artifacts.ArtifactManager;
-import com.intellij.packaging.artifacts.ArtifactPropertiesProvider;
-import com.intellij.packaging.elements.PackagingElement;
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.jdom.Element;
 import org.jetbrains.annotations.Nls;
@@ -43,7 +37,10 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Vector;
 
 /**
  * Created by IntelliJ IDEA.
@@ -56,7 +53,6 @@ public class ExportPatchesProjectComponent implements ProjectComponent, Configur
   private static final Logger LOG = Logger.getLogger(ExportPatchesProjectComponent.class);
 
   private String patchPath = "d:\\projects\\patches_test";
-  private String patchPathPrefix = "ify.4.23.patch_10";
   private ExportPatchesConfigurationForm form;
   private Project project;
 
@@ -78,60 +74,65 @@ public class ExportPatchesProjectComponent implements ProjectComponent, Configur
         break;
       }
 
-      if (StringUtils.isEmpty(patchPathPrefix)) patchPathPrefix = "generatedPrefix";
-
       String changeListClickedName = changeList.getName();
 
+
       Collection<Change> changeCollection = changeList.getChanges();
+      final String systemSeparator = System.getProperty("file.separator");
 
       for (Change change : changeCollection) {
         final VirtualFile virtualFile = change.getVirtualFile();
         final String changedFilenameName = virtualFile.getName();
+        final String changedFilenameExtension = virtualFile.getExtension();
         System.out.println("changedFilenameName = " + changedFilenameName);
         changedFilenames.add(changedFilenameName);
         String filepath = virtualFile.getPath();
         changedFilenames.add(filepath);
 
-        String newFilepath = destination.getPath() + "\\" + patchPathPrefix + "\\" + changedFilenameName;
-
-        System.out.println("file = " + filepath + " -> " + newFilepath);
-
         // artifact code
         final Artifact[] artifacts = ArtifactManager.getInstance(getProject()).getArtifacts();
         for (Artifact artifact : artifacts) {
-          final String outputPath = artifact.getOutputPath();
-
-          List<File> files = new ArrayList<File>();
-          File startingDir = new File(outputPath);
-          final String filterFilename = changedFilenameName.substring(0, changedFilenameName.lastIndexOf(".") + 1);
-          /*final FilenameFilter filenameFilter = new FilenameFilter() {
+          final String artifactOutputPath = artifact.getOutputPath();
+          File startingDir = new File(artifactOutputPath);
+          final String filterFilename = changedFilenameName.substring(0, changedFilenameName.lastIndexOf("."));
+          final FilenameFilter filenameFilter = new FilenameFilter() {
             public boolean accept(File dir, String name) {
-              if(name.contains(filterFilename)) return true;
+              if(name.contains(".")) {
+                final String nameWithoutExtension = name.substring(0, name.lastIndexOf("."));
+                if(nameWithoutExtension.equals(filterFilename)) {
+                  return true;
+                }
+              }
               return false;
             }
-          };*/
-          /*File[] results = listFilesAsArray(startingDir, filenameFilter, true);
+          };
+          File[] results = listFilesAsArray(startingDir, filenameFilter, true);
 
           for (File file : results) {
-            System.out.println("--------file.getPath() = " + file.getPath());
-          }*/
-        }
+            String artifactFilePath = file.getAbsolutePath().replace(systemSeparator, "/");
+            String s = artifactFilePath.replace(artifactOutputPath, "");
 
-        try {
+            try {
 
-          copy(filepath, newFilepath);
+              String finalPath = patchPath.replace(systemSeparator, "/") + s;
+              finalPath = finalPath.substring(0, finalPath.lastIndexOf("/"));
+              finalPath += "/" + changedFilenameName;
+              System.out.println("finalPath = " + finalPath);
+              System.out.println("fromPath = " + filepath);
+              copy(filepath, finalPath);
+            }
+            catch (IOException e) {
+              e.printStackTrace();
+            }
+          }
         }
-        catch (IOException e) {
-          e.printStackTrace();
-        }
-
       }
 
       Messages.showMessageDialog("Changelist '" + changeListClickedName + "' exported!", "Export ok", Messages.getInformationIcon());
     }
   }
 
-  /*public static File[] listFilesAsArray(File directory, FilenameFilter filter, boolean recurse) {
+  public static File[] listFilesAsArray(File directory, FilenameFilter filter, boolean recurse) {
     Collection<File> files = listFiles(directory, filter, recurse);
     //Java4: Collection files = listFiles(directory, filter, recurse);
 
@@ -167,7 +168,7 @@ public class ExportPatchesProjectComponent implements ProjectComponent, Configur
 
     // Return collection of files
     return files;
-  }*/
+  }
 
   public static void copy(String fromFileName, String toFileName) throws IOException {
     File fromFile = new File(fromFileName);
@@ -191,7 +192,7 @@ public class ExportPatchesProjectComponent implements ProjectComponent, Configur
     String parent = toFile.getParent();
     if (parent == null) parent = System.getProperty("user.dir");
     File dir = new File(parent);
-    if (!dir.exists()) dir.mkdir(); //throw new IOException("FileCopy: " + "destination directory doesn't exist: " + parent);
+    if (!dir.exists()) dir.mkdirs(); //throw new IOException("FileCopy: " + "destination directory doesn't exist: " + parent);
     if (dir.isFile()) throw new IOException("FileCopy: " + "destination is not a directory: " + parent);
     if (!dir.canWrite()) throw new IOException("FileCopy: " + "destination directory is unwriteable: " + parent);
     //}
@@ -300,14 +301,6 @@ public class ExportPatchesProjectComponent implements ProjectComponent, Configur
 
   public void writeExternal(Element element) throws WriteExternalException {
     DefaultJDOMExternalizer.writeExternal(this, element);
-  }
-
-  public String getPatchPathPrefix() {
-    return patchPathPrefix;
-  }
-
-  public void setPatchPathPrefix(final String patchPathPrefix) {
-    this.patchPathPrefix = patchPathPrefix;
   }
 
   public Project getProject() {
