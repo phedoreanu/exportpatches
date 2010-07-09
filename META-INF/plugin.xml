@@ -25,9 +25,9 @@
       <add-to-group group-id="ChangesViewPopupMenu" anchor="first"/>
     </action>
 
-    <action id="ExportChangelistToolbarAction" class="com.intellij.idea.plugins.exportpatches.action.ExportChangelistToolbarAction"
+   <!-- <action id="ExportChangelistToolbarAction" class="com.intellij.idea.plugins.exportpatches.action.ExportChangelistToolbarAction"
             text="Export Change list as patch" description="Export Change list as patch in an exploaded directory">
       <add-to-group group-id="ChangesViewToolbar" anchor="last"/>
-    </action>
+    </action>-->
   </actions>
 </idea-plugin>
