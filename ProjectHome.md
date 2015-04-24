@@ -1,0 +1,1 @@
+Exports change lists from intellij IDEA to exploded directories.
